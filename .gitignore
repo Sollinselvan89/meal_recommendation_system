@@ -1,0 +1,43 @@
+# Virtual environment
+venv/
+env/
+*.venv
+.env
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Secrets and sensitive files
+*.pem
+*.key
+.env*
+!.env.example
+
+# Build and distribution
+build/
+dist/
+*.egg-info/
+
+# Machine Learning and data files
+*.pkl
+*.joblib
+*.h5
+*.hdf5
