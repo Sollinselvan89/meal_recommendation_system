@@ -1,4 +1,3 @@
-# app/rules.py
 class FoodRule:
     def __init__(self):
         self.facts = {}
@@ -16,33 +15,16 @@ class FoodRule:
             allergies.remove("None")
         
         for food in foods:
-            # Skip if diet doesn't match
-            diet_tags = food['diet_tags'].lower().split(',')
-            
-            if diet_type == 'Vegetarian' and 'vegetarian' not in diet_tags:
-                continue
-            if diet_type == 'Vegan' and 'vegan' not in diet_tags:
-                continue
-            if diet_type == 'Keto' and 'keto' not in diet_tags:
-                continue
-            if diet_type == 'Gluten-free' and 'gluten-free' not in diet_tags:
-                # Skip if diet is gluten-free but food is not tagged as such
-                continue
-            
-            # Skip foods with allergens
-            # This is simplified - would need ingredient lists to properly check
-            allergen_found = False
-            for allergen in allergies:
-                # Check if allergen appears in the food name or diet tags
-                if allergen.lower() in food['name'].lower() or allergen.lower() in food['diet_tags'].lower():
-                    allergen_found = True
-                    break
-            
-            if allergen_found:
-                continue
-            
-            # Filter by calories (allow ±200 calories from target)
-            if abs(food['calories'] - target_calories) > 200:
+            try:
+                # Safe conversion with error handling
+                if 'calories' in food and food['calories'] != 'calories':
+                    food_calories = int(food['calories']) if isinstance(food['calories'], str) else food['calories']
+                    
+                    # Filter by calories (allow ±200 calories from target)
+                    if abs(food_calories - target_calories) > 200:
+                        continue
+            except (ValueError, TypeError):
+                # Skip foods with invalid calorie data
                 continue
                 
             filtered_foods.append(food)

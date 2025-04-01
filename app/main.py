@@ -1,14 +1,16 @@
 import streamlit as st
 import pandas as pd
 import os
-from langchain.vectorstores import FAISS
-from langchain.embeddings.openai import OpenAIEmbeddings
+from dotenv import load_dotenv
+from langchain_community.vectorstores import FAISS
+from langchain_community.embeddings.openai import OpenAIEmbeddings
 from langchain.docstore.document import Document
 from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
-from langchain.llms import OpenAI
+from langchain_openai import ChatOpenAI
 from rules import FoodRule
 
+load_dotenv()
 # OpenAI API key handling
 if "OPENAI_API_KEY" not in os.environ:
     api_key = st.sidebar.text_input("Enter your OpenAI API key:", type="password")
@@ -46,9 +48,9 @@ def load_food_data():
 
 # Create vector store
 @st.cache_resource
-def get_vector_store(documents):
+def get_vector_store(_documents):
     embeddings = OpenAIEmbeddings()
-    vector_store = FAISS.from_documents(documents, embeddings)
+    vector_store = FAISS.from_documents(_documents, embeddings)
     return vector_store
 
 # App Title and Description
@@ -117,7 +119,8 @@ if st.button("Get Recommendations"):
         meals_text = "\n\n".join([doc.page_content for doc in results])
         
         # Create a chain
-        llm = OpenAI(temperature=0.7)
+        
+        llm = ChatOpenAI(model_name="gpt-3.5-turbo", temperature=0.7)
         chain = LLMChain(llm=llm, prompt=prompt)
         
         # Generate recommendation
@@ -138,3 +141,5 @@ if st.button("Get Recommendations"):
         for i, doc in enumerate(results):
             with st.expander(f"Meal {i+1}: {doc.metadata['name']}"):
                 st.write(doc.page_content)
+
+            
